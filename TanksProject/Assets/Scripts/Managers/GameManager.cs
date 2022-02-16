@@ -10,7 +10,8 @@ public class GameManager : MonoBehaviour
     public float m_EndDelay = 3f;           
     public CameraControl m_CameraControl;   
     public Text m_MessageText;              
-    public GameObject m_TankPrefab;         
+    public GameObject m_TankPrefab;
+    public GameObject tankNPCPrefab;
     public TankManager[] m_Tanks;           
 
 
@@ -42,10 +43,31 @@ public class GameManager : MonoBehaviour
     {
         for (int i = 0; i < m_Tanks.Length; i++)
         {
-            m_Tanks[i].m_Instance =
-                Instantiate(m_TankPrefab, m_Tanks[i].m_SpawnPoint.position, m_Tanks[i].m_SpawnPoint.rotation) as GameObject;
+            if (m_Tanks[i].isNPC) {
+                m_Tanks[i].m_Instance =
+                    Instantiate(tankNPCPrefab, m_Tanks[i].m_SpawnPoint.position, m_Tanks[i].m_SpawnPoint.rotation) as GameObject;
+            }
+            else {
+                m_Tanks[i].m_Instance =
+                    Instantiate(m_TankPrefab, m_Tanks[i].m_SpawnPoint.position, m_Tanks[i].m_SpawnPoint.rotation) as GameObject;
+            }
+            
             m_Tanks[i].m_PlayerNumber = i + 1;
             m_Tanks[i].Setup();
+        }
+
+        //añadir los jugadores a los npcs
+        for (int i = 0; i < m_Tanks.Length; i++) {
+            if (m_Tanks[i].isNPC) {
+                //añadir jugadores para que los busque
+                for (int j = 0; j < m_Tanks.Length; j++) {
+                    if (m_Tanks[j] != m_Tanks[i])
+                    {
+                        m_Tanks[i].AddToPathFinding(m_Tanks[j]);
+                    }
+                }
+            }
+
         }
     }
 

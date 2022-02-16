@@ -5,7 +5,8 @@ using UnityEngine;
 public class TankManager
 {
     public Color m_PlayerColor;            
-    public Transform m_SpawnPoint;         
+    public Transform m_SpawnPoint;
+    public bool isNPC = false;
     [HideInInspector] public int m_PlayerNumber;             
     [HideInInspector] public string m_ColoredPlayerText;
     [HideInInspector] public GameObject m_Instance;          
@@ -15,18 +16,32 @@ public class TankManager
     private TankMovement m_Movement;       
     private TankShooting m_Shooting;
     private GameObject m_CanvasGameObject;
+    
+    private TankNPC _tankNPC;
 
-
-    public void Setup()
+    public void AddToPathFinding(TankManager tank)
     {
-        m_Movement = m_Instance.GetComponent<TankMovement>();
-        m_Shooting = m_Instance.GetComponent<TankShooting>();
+        _tankNPC.playersTanks.Add(tank.m_Instance.transform);
+    }
+
+    public virtual void Setup()
+    {
+        if (isNPC) {
+            _tankNPC = m_Instance.GetComponent<TankNPC>();
+
+            m_ColoredPlayerText = "<color=#" + ColorUtility.ToHtmlStringRGB(m_PlayerColor) + ">NPC " + m_PlayerNumber + "</color>";
+        }
+        else {
+            m_Movement = m_Instance.GetComponent<TankMovement>();
+            m_Shooting = m_Instance.GetComponent<TankShooting>();
+
+            m_Movement.m_PlayerNumber = m_PlayerNumber;
+            m_Shooting.m_PlayerNumber = m_PlayerNumber;
+
+            m_ColoredPlayerText = "<color=#" + ColorUtility.ToHtmlStringRGB(m_PlayerColor) + ">PLAYER " + m_PlayerNumber + "</color>";
+        }
+        
         m_CanvasGameObject = m_Instance.GetComponentInChildren<Canvas>().gameObject;
-
-        m_Movement.m_PlayerNumber = m_PlayerNumber;
-        m_Shooting.m_PlayerNumber = m_PlayerNumber;
-
-        m_ColoredPlayerText = "<color=#" + ColorUtility.ToHtmlStringRGB(m_PlayerColor) + ">PLAYER " + m_PlayerNumber + "</color>";
 
         MeshRenderer[] renderers = m_Instance.GetComponentsInChildren<MeshRenderer>();
 
@@ -37,19 +52,31 @@ public class TankManager
     }
 
 
-    public void DisableControl()
+    public virtual void DisableControl()
     {
-        m_Movement.enabled = false;
-        m_Shooting.enabled = false;
-
+        if (isNPC) {
+            _tankNPC.enabled = false;
+            _tankNPC.navMeshAgent.enabled = false;
+        }
+        else {
+            m_Movement.enabled = false;
+            m_Shooting.enabled = false;
+        }
+        
         m_CanvasGameObject.SetActive(false);
     }
 
 
-    public void EnableControl()
+    public virtual void EnableControl()
     {
-        m_Movement.enabled = true;
-        m_Shooting.enabled = true;
+        if (isNPC) {
+            _tankNPC.enabled = true;
+            _tankNPC.navMeshAgent.enabled = true;
+        }
+        else {
+            m_Movement.enabled = true;
+            m_Shooting.enabled = true;
+        }
 
         m_CanvasGameObject.SetActive(true);
     }
