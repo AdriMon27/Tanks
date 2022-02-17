@@ -55,8 +55,9 @@ public class TankManager
     public virtual void DisableControl()
     {
         if (isNPC) {
+            //Debug.Log("esto es " + _tankNPC.navMeshAgent);
+            //_tankNPC.navMeshAgent.enabled = false;
             _tankNPC.enabled = false;
-            _tankNPC.navMeshAgent.enabled = false;
         }
         else {
             m_Movement.enabled = false;
@@ -71,7 +72,7 @@ public class TankManager
     {
         if (isNPC) {
             _tankNPC.enabled = true;
-            _tankNPC.navMeshAgent.enabled = true;
+            //_tankNPC.navMeshAgent.enabled = true;
         }
         else {
             m_Movement.enabled = true;

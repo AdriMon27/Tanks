@@ -230,7 +230,9 @@ public class GameManager : MonoBehaviour
     {
         for (int i = 0; i < m_Tanks.Length; i++)
         {
+            Debug.Log(i+"a");
             m_Tanks[i].DisableControl();
+            Debug.Log(i+"b");
         }
     }
 }

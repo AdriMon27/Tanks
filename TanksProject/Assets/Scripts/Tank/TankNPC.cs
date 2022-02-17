@@ -14,14 +14,14 @@ public class TankNPC : MonoBehaviour
     public float m_MinLaunchForce = 15f;
     public float m_MaxLaunchForce = 30f;
 
-    public NavMeshAgent navMeshAgent => _navMeshAgent;
+    //public NavMeshAgent navMeshAgent { get => _navMeshAgent; }
     private NavMeshAgent _navMeshAgent;
     private Vector3 _nearestPlayer;
     private float m_CurrentLaunchForce;
     private float _timeUntilNextShot = 3f;
     private float _timeWithoutShot = 0f;
 
-    private void Start()
+    private void Awake()
     {
         _navMeshAgent = GetComponent<NavMeshAgent>();
         _nearestPlayer = SearchNearestPlayer();
@@ -43,6 +43,16 @@ public class TankNPC : MonoBehaviour
         _navMeshAgent.SetDestination(_nearestPlayer);
 
         _timeWithoutShot += Time.deltaTime;
+    }
+
+    private void OnDisable()
+    {
+        _navMeshAgent.enabled = false;
+    }
+
+    private void OnEnable()
+    {
+        _navMeshAgent.enabled = true;
     }
 
     //funcion llamada desde el GameManager nada más empezar la partida
